@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">CityPulse</string>
+    <string name="google_maps_api_key">AIzaSyCcL3jm5aAXt1EJuJG6ScwE2NSSLJ9_G3E</string>
+    <string name="map_loading">Loading your current location…</string>
+    <string name="map_permission_denied">Location permission denied. Grant ACCESS_FINE_LOCATION to display your current location.</string>
+    <string name="map_location_unavailable">Unable to determine your current location.</string>
+    <string name="map_location_format">You are here: %1$.5f, %2$.5f</string>
+    <string name="map_marker_title">Current location</string>
+    <string name="open_trip_map_api_key">YOUR_OPEN_TRIP_MAP_API_KEY</string>
+    <string name="places_loading">Loading nearby places…</string>
+    <string name="unable_to_load_places">Unable to load nearby places</string>
+    <string name="place_location_format">Lat: %1$.4f, Lon: %2$.4f | %3$s</string>
+    <string name="error_loading_places">Error Loading Places</string>
+    <string name="retry">Retry</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="places_count_format">%d nearby places found</string>
+</resources>
