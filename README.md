@@ -259,7 +259,7 @@ La clé est utilisée par la couche réseau dans `PlacesRepository`.
 - partage d’un lieu ;
 - favoris temporaires en mémoire.
 
-### 🛠️ Fonctionnalités restantes / à améliorer
+### Fonctionnalités restantes / à améliorer
 
 - persistance des favoris avec **Room** ;
 - persistance des notes personnelles en base locale ;
