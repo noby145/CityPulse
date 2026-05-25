@@ -54,7 +54,9 @@ class PlacesRepository {
                     limit = limit,
                     skip = 0, // Replaced TODO() with 0 to prevent NotImplementedError
                 )
-                val places = response.features.map { it.toPlace() }
+                val places = response.features
+                    .map { feature -> feature.toPlace(latitude, longitude) }
+                    .sortedBy { it.distanceMeters }
                 Result.success(places)
             } catch (e: Exception) {
                 // Add more context to the error for debugging

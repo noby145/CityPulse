@@ -5,12 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.citypulse.databinding.FragmentPlacesBinding
 import com.example.citypulse.data.remote.model.Place
+import com.example.citypulse.databinding.FragmentPlacesBinding
+import kotlinx.coroutines.launch
 
 /**
  * Example Fragment demonstrating how to use the PlacesViewModel to fetch and display nearby places.
@@ -20,8 +25,12 @@ class PlacesFragment : Fragment() {
     private var _binding: FragmentPlacesBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: PlacesViewModel by viewModels()
+    private val viewModel: PlacesViewModel by viewModels {
+        PlacesViewModelFactory(requireActivity().application)
+    }
     private lateinit var placesAdapter: PlacesAdapter
+    private var currentSearchQuery: String = ""
+    private var currentCategoryFilter: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,23 +58,57 @@ class PlacesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        placesAdapter = PlacesAdapter(emptyList())
+        placesAdapter = PlacesAdapter { place ->
+            navigateToPlaceDetails(place)
+        }
         binding.placesRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = placesAdapter
+            setHasFixedSize(true)
+        }
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                currentSearchQuery = query.orEmpty()
+                placesAdapter.updateFilters(currentSearchQuery, currentCategoryFilter)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                currentSearchQuery = newText.orEmpty()
+                placesAdapter.updateFilters(currentSearchQuery, currentCategoryFilter)
+                return true
+            }
+        })
+
+        bindCategoryChip(binding.chipAll, "")
+        bindCategoryChip(binding.chipRestaurants, "restaurants")
+        bindCategoryChip(binding.chipMuseums, "museums")
+        bindCategoryChip(binding.chipParks, "parks")
+        bindCategoryChip(binding.chipShops, "shops")
+
+        placesAdapter.updateFilters(currentSearchQuery, currentCategoryFilter)
+    }
+
+    private fun bindCategoryChip(chip: View, category: String) {
+        chip.setOnClickListener {
+            currentCategoryFilter = category
+            placesAdapter.updateFilters(currentSearchQuery, currentCategoryFilter)
         }
     }
 
     private fun observeViewModel() {
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            binding.loadingIndicator.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.loadingIndicator.visibility = if (state.isLoading) View.VISIBLE else View.GONE
 
-            if (state.places.isNotEmpty()) {
-                placesAdapter.updatePlaces(state.places)
-            }
+                    placesAdapter.submitPlaces(state.places)
 
-            if (state.errorMessage.isNotEmpty()) {
-                showError(state.errorMessage)
+                    if (state.errorMessage.isNotEmpty()) {
+                        showError(state.errorMessage)
+                    }
+                }
             }
         }
     }
@@ -74,51 +117,23 @@ class PlacesFragment : Fragment() {
         Toast.makeText(requireContext(), "Error: $message", Toast.LENGTH_SHORT).show()
     }
 
+    private fun navigateToPlaceDetails(place: Place) {
+        val direction = PlacesFragmentDirections.actionPlacesFragmentToPlaceDetailFragment(
+            placeId = place.id,
+            placeName = place.name,
+            placeCategory = place.kinds,
+            address = place.address,
+            latitude = place.latitude.toFloat(),
+            longitude = place.longitude.toFloat(),
+            distanceMeters = place.distanceMeters.toFloat(),
+            wikidata = place.wikidata,
+        )
+        findNavController().navigate(direction)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-}
-
-/**
- * Simple RecyclerView adapter for displaying places.
- */
-class PlacesAdapter(private var places: List<Place>) : RecyclerView.Adapter<PlacesViewHolder>() {
-    fun updatePlaces(newPlaces: List<Place>) {
-        places = newPlaces
-        notifyItemRangeChanged(0, places.size)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlacesViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_2, parent, false)
-        return PlacesViewHolder(itemView)
-    }
-
-    override fun onBindViewHolder(holder: PlacesViewHolder, position: Int) {
-        holder.bind(places[position])
-    }
-
-    override fun getItemCount(): Int = places.size
-}
-
-/**
- * ViewHolder for a place item showing name and location.
- */
-class PlacesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(place: Place) {
-        // This uses Android's built-in simple_list_item_2 layout with text1 and text2
-        // Customize with your own layout file as needed
-        val text1: android.widget.TextView? = itemView.findViewById(android.R.id.text1)
-        val text2: android.widget.TextView? = itemView.findViewById(android.R.id.text2)
-
-        text1?.text = place.name
-        text2?.text = itemView.context.getString(
-            com.example.citypulse.R.string.place_location_format,
-            place.latitude,
-            place.longitude,
-            place.kinds,
-        )
     }
 }
 

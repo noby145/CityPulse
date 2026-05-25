@@ -10,7 +10,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.citypulse.R
+import com.example.citypulse.data.remote.model.Place
 import com.example.citypulse.databinding.FragmentMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,7 +26,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MapsViewModel by viewModels()
+    private val viewModel: MapsViewModel by viewModels {
+        MapsViewModelFactory(requireActivity().application)
+    }
     private var googleMap: GoogleMap? = null
     private var mapReady = false
     private var infoWindowAdapter: MapInfoWindowAdapter? = null
@@ -155,8 +159,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         // Set up marker click listener
         map.setOnMarkerClickListener { marker ->
-            marker.showInfoWindow()
-            true  // Consume the event
+            val selectedPlace = marker.tag as? Place
+            if (selectedPlace != null) {
+                navigateToPlaceDetails(selectedPlace)
+                true
+            } else {
+                marker.showInfoWindow()
+                true
+            }
         }
 
         if (hasLocationPermission()) {
@@ -212,7 +222,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
      * Each marker shows the place name and can be clicked for detailed info.
      * Note: Does NOT clear existing markers (like current location).
      */
-    fun displayNearbyPlaces(places: List<com.example.citypulse.data.remote.model.Place>) {
+    fun displayNearbyPlaces(places: List<Place>) {
         val map = googleMap ?: return
         if (!mapReady) return
 
@@ -227,13 +237,28 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 if (place.longitude >= 0) "E" else "W",
             )
 
-            map.addMarker(
+            val marker = map.addMarker(
                 MarkerOptions()
                     .position(location)
                     .title(place.name)
                     .snippet("${place.kinds}|$coordinateText"),
             )
+            marker?.tag = place
         }
+    }
+
+    private fun navigateToPlaceDetails(place: Place) {
+        val direction = MapsFragmentDirections.actionMapsFragmentToPlaceDetailFragment(
+            placeId = place.id,
+            placeName = place.name,
+            placeCategory = place.kinds,
+            address = place.address,
+            latitude = place.latitude.toFloat(),
+            longitude = place.longitude.toFloat(),
+            distanceMeters = place.distanceMeters.toFloat(),
+            wikidata = place.wikidata,
+        )
+        findNavController().navigate(direction)
     }
 
     private fun hasLocationPermission(): Boolean {

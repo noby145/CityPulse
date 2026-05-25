@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mapsFragment">
+
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.citypulse.ui.maps.MapsFragment"
+        android:label="Maps">
+        <action
+            android:id="@+id/action_mapsFragment_to_placeDetailFragment"
+            app:destination="@id/placeDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/placesFragment"
+        android:name="com.example.citypulse.ui.places.PlacesFragment"
+        android:label="Nearby Places">
+        <action
+            android:id="@+id/action_placesFragment_to_placeDetailFragment"
+            app:destination="@id/placeDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/placeDetailFragment"
+        android:name="com.example.citypulse.ui.places.PlaceDetailFragment"
+        android:label="Place Details">
+        <argument
+            android:name="placeId"
+            app:argType="string" />
+        <argument
+            android:name="placeName"
+            app:argType="string" />
+        <argument
+            android:name="placeCategory"
+            app:argType="string" />
+        <argument
+            android:name="address"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+        <argument
+            android:name="latitude"
+            app:argType="float" />
+        <argument
+            android:name="longitude"
+            app:argType="float" />
+        <argument
+            android:name="distanceMeters"
+            app:argType="float" />
+        <argument
+            android:name="wikidata"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+    </fragment>
+
+</navigation>
+

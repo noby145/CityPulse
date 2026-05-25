@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+apply(plugin = "androidx.navigation.safeargs.kotlin")
+
 android {
     namespace = "com.example.citypulse"
     compileSdk = 36
@@ -43,6 +45,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.play.services.maps)
@@ -60,6 +65,8 @@ dependencies {
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    // Room (temporarily removed to restore a working build). We'll re-add Room with the
+    // correct Kotlin/AGP configuration in a follow-up change.
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

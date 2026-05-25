@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fillViewport="true">
+
+	<com.google.android.material.card.MaterialCardView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="16dp"
+		app:cardCornerRadius="24dp"
+		app:cardElevation="2dp"
+		app:strokeColor="?attr/colorOutlineVariant"
+		app:strokeWidth="1dp">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="20dp">
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/place_detail_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textAppearance="?attr/textAppearanceHeadlineSmall"
+				android:textStyle="bold"
+				tools:text="Golden Gate Bridge" />
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/place_detail_category"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="12dp"
+				android:textAppearance="?attr/textAppearanceBodyLarge"
+				tools:text="Category: architecture,bridge" />
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/place_detail_address"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:textAppearance="?attr/textAppearanceBodyLarge"
+				tools:text="Address: San Francisco, CA, USA" />
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/place_detail_coordinates"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:textAppearance="?attr/textAppearanceBodyMedium"
+				tools:text="Coordinates: 37.81993, -122.47826" />
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/place_detail_distance"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:textAppearance="?attr/textAppearanceBodyLarge"
+				android:textColor="?attr/colorPrimary"
+				tools:text="Distance: 1.2 km" />
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/place_detail_id"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:textAppearance="?attr/textAppearanceBodyMedium"
+				tools:text="ID: N12345" />
+
+			<com.google.android.material.textview.MaterialTextView
+				android:id="@+id/place_detail_wikidata"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:textAppearance="?attr/textAppearanceBodyMedium"
+				tools:text="Wikidata: Q12345" />
+
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/place_notes_input_layout"
+				style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="20dp"
+				android:hint="@string/place_notes_hint"
+				app:boxBackgroundMode="outline"
+				app:counterEnabled="true"
+				app:counterMaxLength="500">
+
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/place_notes_edit_text"
+					android:layout_width="match_parent"
+					android:layout_height="120dp"
+					android:gravity="top"
+					android:inputType="textMultiLine|textCapSentences"
+					android:maxLines="6"
+					android:hint="@string/place_notes_hint"
+					android:importantForAutofill="no"
+					tools:text="This is a great place for sunset photos." />
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="20dp"
+				android:orientation="horizontal">
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/place_favorite_button"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="@string/add_to_favorites"
+					app:icon="@android:drawable/btn_star_big_off"
+					app:iconGravity="textStart"
+					app:iconPadding="8dp" />
+
+				<Space
+					android:layout_width="12dp"
+					android:layout_height="0dp" />
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/place_share_button"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="@string/share_place"
+					app:icon="@android:drawable/ic_menu_share"
+					app:iconGravity="textStart"
+					app:iconPadding="8dp" />
+			</LinearLayout>
+
+		</LinearLayout>
+	</com.google.android.material.card.MaterialCardView>
+
+</androidx.core.widget.NestedScrollView>
+

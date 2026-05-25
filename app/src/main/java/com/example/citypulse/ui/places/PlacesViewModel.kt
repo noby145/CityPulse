@@ -1,14 +1,15 @@
 package com.example.citypulse.ui.places
 
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import android.app.Application
 import com.example.citypulse.R
 import com.example.citypulse.data.remote.model.Place
 import com.example.citypulse.data.repository.PlacesRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class PlacesUiState(
@@ -20,8 +21,8 @@ data class PlacesUiState(
 class PlacesViewModel(application: Application) : AndroidViewModel(application) {
     private val placesRepository = PlacesRepository()
 
-    private val _uiState = MutableLiveData(PlacesUiState())
-    val uiState: LiveData<PlacesUiState> = _uiState
+    private val _uiState = MutableStateFlow(PlacesUiState())
+    val uiState: StateFlow<PlacesUiState> = _uiState.asStateFlow()
 
     fun getNearbyPlaces(
         latitude: Double,
@@ -30,7 +31,7 @@ class PlacesViewModel(application: Application) : AndroidViewModel(application) 
         kinds: String = "",
         limit: Int = 50,
     ) {
-        _uiState.value = _uiState.value?.copy(
+        _uiState.value = _uiState.value.copy(
             isLoading = true,
             errorMessage = "",
         )
@@ -45,21 +46,17 @@ class PlacesViewModel(application: Application) : AndroidViewModel(application) 
             )
 
             result.onSuccess { places ->
-                _uiState.postValue(
-                    PlacesUiState(
-                        isLoading = false,
-                        places = places,
-                        errorMessage = "",
-                    ),
+                _uiState.value = PlacesUiState(
+                    isLoading = false,
+                    places = places,
+                    errorMessage = "",
                 )
             }.onFailure { exception ->
-                _uiState.postValue(
-                    PlacesUiState(
-                        isLoading = false,
-                        places = emptyList(),
-                        errorMessage = exception.message
-                            ?: getApplication<Application>().getString(R.string.unable_to_load_places),
-                    ),
+                _uiState.value = PlacesUiState(
+                    isLoading = false,
+                    places = emptyList(),
+                    errorMessage = exception.message
+                        ?: getApplication<Application>().getString(R.string.unable_to_load_places),
                 )
             }
         }
